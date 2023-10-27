@@ -10,7 +10,7 @@ use std::fmt::Display;
 pub struct Board {
     board: [[Option<u8>; 9]; 9],
 }
-struct Index(usize, usize);
+pub struct Index(usize, usize);
 
 impl Board {
     /// Create a new board from a 9x9 array of u8
@@ -18,7 +18,7 @@ impl Board {
     /// Any other number represents a filled cell
     /// # Example
     /// ```
-    /// use sudoku_solver::board::{Board, Index};
+    /// use sudoku_solver_by_roy::board::{Board, Index};
     /// let board = Board::new(&[
     /// [0, 0, 3, 4, 0, 7, 0, 6, 0],
     /// [7, 0, 0, 0, 0, 0, 0, 4, 0],

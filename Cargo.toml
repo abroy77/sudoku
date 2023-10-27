@@ -1,5 +1,5 @@
 [package]
-name = "sudoku_solver"
+name = "sudoku_solver_by_roy"
 version = "0.1.0"
 authors = ["Abhishek Roy <royabhishek77@gmail.com>"]
 edition = "2021"

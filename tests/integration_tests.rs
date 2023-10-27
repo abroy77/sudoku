@@ -1,6 +1,6 @@
-extern crate sudoku_solver;
+extern crate sudoku_solver_by_roy;
 use std::path::PathBuf;
-use sudoku_solver::board::{solve, Board};
+use sudoku_solver_by_roy::board::{solve, Board};
 #[test]
 fn test_pass() {
     let mut board = Board::from_csv(&PathBuf::from("tests/test_board_pass.csv")).unwrap();
