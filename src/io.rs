@@ -1,9 +1,22 @@
-// scripts to read csv files with a sudoku puzzle
+//! This module contains the functions to read a board from a csv file
+//! The csv file must be a 9x9 grid of numbers between 0 and 9
+//! 0 represents an empty cell
+//! Any other number represents a filled cell
+//! # Panics
+//! 1. File not found
+//! 2. File not readable
+//! 3. File not csv
+//! 4. File not 9x9
+//! 5. File contains numbers other than 0-9
+//! 6. File contains non integers
+//! 7. Board does not satisfy sudoku rules
+
 use crate::board::Board;
 use csv::ReaderBuilder;
 use std::path::PathBuf;
 
 impl Board {
+    /// Create a new board from a csv file
     pub fn from_csv(path: &PathBuf) -> Result<Board, &'static str> {
         let mut board = [[0; 9]; 9];
         let mut reader = ReaderBuilder::new()

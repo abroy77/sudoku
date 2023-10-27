@@ -1,6 +1,6 @@
 use clap::Parser;
 use std::path::PathBuf;
-use sudoku_solver::board::{solve_mut, Board};
+use sudoku_solver::board::{solve, Board};
 
 #[derive(Parser, Debug)]
 #[command(author,version,about,long_about=None)]
@@ -21,7 +21,7 @@ fn main() {
         }
     };
 
-    match solve_mut(&mut board) {
+    match solve(&mut board) {
         Some(answer) => println!("{}", answer),
         None => println!("No solution found"),
     }

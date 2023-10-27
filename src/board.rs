@@ -1,3 +1,10 @@
+//! This module contains the board struct and associated functions
+//! The board struct is a 9x9 array of options
+//! Empty cells are represented by None
+//! Filled cells are represented by Some(u8)
+//!
+//! The module also contains a function to solve the board by backtracking
+
 use std::fmt::Display;
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub struct Board {
@@ -6,6 +13,29 @@ pub struct Board {
 struct Index(usize, usize);
 
 impl Board {
+    /// Create a new board from a 9x9 array of u8
+    /// 0 represents an empty cell
+    /// Any other number represents a filled cell
+    /// # Example
+    /// ```
+    /// use sudoku_solver::board::{Board, Index};
+    /// let board = Board::new(&[
+    /// [0, 0, 3, 4, 0, 7, 0, 6, 0],
+    /// [7, 0, 0, 0, 0, 0, 0, 4, 0],
+    /// [0, 0, 0, 0, 1, 0, 2, 5, 0],
+    /// [4, 8, 0, 3, 0, 0, 1, 0, 0],
+    /// [0, 5, 0, 0, 0, 0, 0, 0, 2],
+    /// [0, 6, 0, 0, 2, 0, 0, 0, 0],
+    /// [0, 9, 0, 1, 0, 5, 0, 0, 8],
+    /// [1, 0, 0, 6, 0, 0, 0, 0, 5],
+    /// [0, 0, 0, 0, 0, 0, 4, 0, 0],
+    /// ]);
+    ///
+    /// ```
+    /// # Panics
+    /// 1. Array not 9x9.
+    /// 2. Array contains numbers other than 0-9.
+    /// 3. Array contains non integers.
     pub fn new(board: &[[u8; 9]; 9]) -> Self {
         // convert to options
         let mut new_board = [[None; 9]; 9];
@@ -19,21 +49,22 @@ impl Board {
         }
         Board { board: new_board }
     }
-
+    /// Get the value of a cell at a given index
     fn get_cell(&self, index: &Index) -> Option<u8> {
         self.board[index.0][index.1]
     }
-
-    fn update_cell_mut(&mut self, index: &Index, value: u8) {
+    /// Update the value of a cell at a given index
+    fn update_cell(&mut self, index: &Index, value: u8) {
         self.board[index.0][index.1] = match value {
             0 => None,
             _ => Some(value),
         };
     }
-
+    /// Get a row of the board
     fn get_row(&self, row: usize) -> [Option<u8>; 9] {
         self.board[row]
     }
+    /// Get a column of the board
     fn get_column(&self, column: usize) -> [Option<u8>; 9] {
         let mut column_array = [None; 9];
         for (i, row) in self.board.iter().enumerate() {
@@ -41,7 +72,7 @@ impl Board {
         }
         column_array
     }
-
+    /// Get elements in the 3x3 subgrid that contains the given index
     fn get_subgrid(&self, index: &Index) -> [Option<u8>; 9] {
         let gridindex: Index = Index(index.0 / 3, index.1 / 3);
         let mut subgrid = [None; 9];
@@ -53,7 +84,7 @@ impl Board {
         }
         subgrid
     }
-
+    /// Get the possible valid entries for a given index
     fn valid_entries(&self, index: &Index) -> [bool; 9] {
         let mut possible_entries = [true; 9];
         self.get_row(index.0).iter().for_each(|x| match x {
@@ -73,7 +104,7 @@ impl Board {
 
         possible_entries
     }
-
+    /// Check if a given entry is valid
     fn is_valid_entry(&self, index: &Index) -> bool {
         let element = self.get_cell(index);
         if element.is_none() {
@@ -92,7 +123,7 @@ impl Board {
         }
         return true;
     }
-
+    /// Check if the board is valid
     pub fn is_valid_board(&self) -> bool {
         for i in 0..9 {
             for j in 0..9 {
@@ -103,11 +134,11 @@ impl Board {
         }
         return true;
     }
-
+    /// Check if the board is complete
     fn is_complete(&self) -> bool {
         self.is_valid_board() && (self.next_empty().is_none())
     }
-
+    /// Get the next empty cell
     fn next_empty(&self) -> Option<Index> {
         for (i, row) in self.board.iter().enumerate() {
             for (j, cell) in row.iter().enumerate() {
@@ -143,7 +174,8 @@ impl Display for Board {
     }
 }
 
-pub fn solve_mut(board: &mut Board) -> Option<Board> {
+/// Solve the board by backtracking
+pub fn solve(board: &mut Board) -> Option<Board> {
     if board.is_complete() {
         return Some(board.clone());
     }
@@ -158,14 +190,14 @@ pub fn solve_mut(board: &mut Board) -> Option<Board> {
         if !is_valid {
             continue;
         }
-        board.update_cell_mut(&next_empty, (i + 1) as u8);
+        board.update_cell(&next_empty, (i + 1) as u8);
         if board.is_valid_entry(&next_empty) {
-            if let Some(board) = solve_mut(board) {
+            if let Some(board) = solve(board) {
                 return Some(board.clone());
             }
         }
     }
-    board.update_cell_mut(&next_empty, 0);
+    board.update_cell(&next_empty, 0);
     return None;
 }
 
@@ -175,8 +207,8 @@ mod tests {
 
     fn make_board() -> Board {
         Board::new(&[
-            [0, 0, 3, 4, 0, 7, 0, 6, 0], //
-            [7, 0, 0, 0, 0, 0, 0, 4, 0], //
+            [0, 0, 3, 4, 0, 7, 0, 6, 0],
+            [7, 0, 0, 0, 0, 0, 0, 4, 0],
             [0, 0, 0, 0, 1, 0, 2, 5, 0],
             [4, 8, 0, 3, 0, 0, 1, 0, 0],
             [0, 5, 0, 0, 0, 0, 0, 0, 2],
@@ -269,7 +301,7 @@ mod tests {
     fn test_valid_entry() {
         let mut board = make_board();
         assert!(board.is_valid_entry(&Index(0, 2)));
-        board.update_cell_mut(&Index(0, 0), 3);
+        board.update_cell(&Index(0, 0), 3);
         assert!(!board.is_valid_entry(&Index(0, 0)));
     }
 
@@ -289,7 +321,7 @@ mod tests {
     fn test_solve_mut() {
         let mut board = make_board();
         let solved_board = make_solved_board();
-        let experimental_solution = solve_mut(&mut board).unwrap_or_else(|| {
+        let experimental_solution = solve(&mut board).unwrap_or_else(|| {
             panic!("this should not happen because we know the board is solvable")
         });
 

@@ -1,10 +1,10 @@
 extern crate sudoku_solver;
 use std::path::PathBuf;
-use sudoku_solver::board::{solve_mut, Board};
+use sudoku_solver::board::{solve, Board};
 #[test]
 fn test_pass() {
     let mut board = Board::from_csv(&PathBuf::from("tests/test_board_pass.csv")).unwrap();
-    solve_mut(&mut board);
+    solve(&mut board);
     assert_eq!(
         board,
         Board::new(&[
