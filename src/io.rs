@@ -1,10 +1,10 @@
 // scripts to read csv files with a sudoku puzzle
 use crate::board::Board;
 use csv::ReaderBuilder;
-use std::path::Path;
+use std::path::PathBuf;
 
 impl Board {
-    pub fn from_csv(path: &Path) -> Result<Board, &'static str> {
+    pub fn from_csv(path: &PathBuf) -> Result<Board, &'static str> {
         let mut board = [[0; 9]; 9];
         let mut reader = ReaderBuilder::new()
             .has_headers(false)
@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn test_from_csv() {
-        let board = Board::from_csv(Path::new("tests/test_board_pass.csv")).unwrap();
+        let board = Board::from_csv(&PathBuf::from("tests/test_board_pass.csv")).unwrap();
         assert_eq!(
             board,
             Board::new(&[
@@ -71,24 +71,24 @@ mod tests {
 
     #[test]
     fn test_invalid_non_int() {
-        let board = Board::from_csv(Path::new("tests/test_invalid_non_int.csv"));
+        let board = Board::from_csv(&PathBuf::from("tests/test_invalid_non_int.csv"));
         assert_eq!(board, Err("Invalid csv file. Only int numbers allowed"));
     }
     #[test]
     fn test_invalid_8_lines() {
-        let board = Board::from_csv(Path::new("tests/test_invalid_8_lines.csv"));
+        let board = Board::from_csv(&PathBuf::from("tests/test_invalid_8_lines.csv"));
         assert_eq!(board, Err("Invalid csv file. Only 9x9 boards allowed"));
     }
 
     #[test]
     fn test_invalid_column() {
-        let board = Board::from_csv(Path::new("tests/test_invalid_column.csv"));
+        let board = Board::from_csv(&PathBuf::from("tests/test_invalid_column.csv"));
         assert_eq!(board, Err("Invalid csv file. Only 9x9 boards allowed"));
     }
 
     #[test]
     fn test_invalid_sudoku() {
-        let board = Board::from_csv(Path::new("tests/test_board_invalid_sudoku.csv"));
+        let board = Board::from_csv(&PathBuf::from("tests/test_board_invalid_sudoku.csv"));
         assert_eq!(
             board,
             Err("Invalid Board: Board does not satisfy sudoku rules")

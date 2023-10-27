@@ -1,9 +1,15 @@
 [package]
-name = "sudoku"
+name = "sudoku_solver"
 version = "0.1.0"
+authors = ["Abhishek Roy <royabhishek77@gmail.com>"]
 edition = "2021"
+description = "A sudoku solver written in Rust"
+license = "MIT"
+repository = "https://github.com/abroy77/sudoku.git"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "4.4.7", features = ["derive"] }
 csv = "1.3.0"
